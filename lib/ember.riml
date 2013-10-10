@@ -1,0 +1,11 @@
+riml_include 'controller_name_filter.riml'
+riml_include 'model_name_filter.riml'
+riml_include 'ember_extension.riml'
+
+def ember#get_extension
+  unless exists('s:extension')
+    s:extension = new EmberExtension()
+  end
+
+  return s:extension
+end

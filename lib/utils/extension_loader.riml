@@ -1,0 +1,22 @@
+class ExtensionLoader
+  def initialize(name)
+    self.name = name
+  end
+
+  defm start
+    extension_cmd = "#{self.name}#get_extension()"
+    reg_cmd = ":call portkey#add_extension(#{extension_cmd})"
+
+    execute(":augroup portkey_extension_#{self.name}_group")
+    execute(":autocmd!")
+    execute(":autocmd User portkey_extension_#{self.name} #{reg_cmd}")
+    ""info(":autocmd User portkey_extension_#{self.name} #{reg_cmd}")
+    execute(":augroup END")
+  end
+
+  defm stop
+    execute(":augroup portkey_extension_#{self.name}_group")
+    execute(":autocmd!")
+    execute(":augroup END")
+  end
+end

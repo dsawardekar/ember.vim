@@ -1,0 +1,379 @@
+class InflectionRule
+  def initialize(from, to, *args)
+    self.from = from
+    self.to = to
+
+    if len(args) == 0
+      self.flags = 'gi'
+    else
+      self.flags = args[0]
+    end
+  end
+end
+
+class InflectionExecuter
+  defm inflect(src, rules)
+    for rule in rules
+        ""info("matching: source=#{src}, from=#{rule.from} to=#{rule.to}")
+      if match(src, rule.from) >= 0
+        ""info('  matched', src, rule.from, rule.to)
+        return substitute(src, rule.from, rule.to, rule.flags)
+      end
+    end
+
+    return src
+  end
+end
+
+class BaseInflector
+  def initialize()
+    self.is_base_inflector = true
+    self.plural_rules = []
+    self.singular_rules = []
+    self.singular_irregulars = []
+    self.plural_irregulars = []
+    self.uncountable = {}
+    self.executer = new InflectionExecuter()
+    self.acronyms = {}
+    self.acronyms_regex = ''
+
+    " prepend new rules by default "
+    " new rules get greater priority this way "
+    " change to append to add after existing rules "
+    self.mode = 'prepend'
+  end
+
+  defm add_rule(rules, from, to, *args)
+    if self.is_uncountable(from)
+      :unlet self.uncountable[a:from]
+    end
+
+    from = '\v' . from
+
+    if len(args) == 1
+      flags = args[0]
+      rule = new InflectionRule(from, to, flags)
+    else
+      rule = new InflectionRule(from, to)
+    end
+
+    " new rules go to the front "
+    if self.mode == 'prepend'
+      insert(rules, rule)
+    else
+      add(rules, rule)
+    end
+  end
+
+  " customization api "
+  defm set_mode(mode)
+    self.mode = mode
+  end
+
+  defm get_mode()
+    return self.mode
+  end
+
+  defm add_plural_rule(*args)
+    return call(self['add_rule'], [self.plural_rules] + args, self)
+  end
+
+  defm add_singular_rule(*args)
+    return call(self['add_rule'], [self.singular_rules] + args, self)
+  end
+
+  defm add_uncountable(word)
+    self.uncountable[word] = true
+  end
+
+  " each item is of the form, [from, to, {flags}] "
+  defm add_plural_rules(rules)
+    for rule in rules
+      res = call(self['add_plural_rule'], rule, self)
+    end
+  end
+
+  defm add_singular_rules(rules)
+    for rule in rules
+      res = call(self['add_singular_rule'], rule, self)
+    end
+  end
+
+  defm add_uncountables(words)
+    for word in words
+      self.add_uncountable(word)
+    end
+  end
+
+  defm add_irregular(singular, plural)
+    singular_pattern = singular . '$'
+    plural_pattern = plural . '$'
+    self.add_rule(self.singular_irregulars, plural_pattern, singular)
+    self.add_rule(self.plural_irregulars, singular_pattern, plural)
+  end
+
+  defm add_irregulars(rules)
+    for rule in rules
+      res = call(self['add_irregular'], rule, self)
+    end
+  end
+
+  defm add_acronym(word)
+    acronym = tolower(word)
+
+    self.acronyms[acronym] = word
+    self.update_acronyms_regex()
+  end
+
+  defm add_acronyms(words)
+    for word in words
+      acronym = tolower(word)
+      self.acronyms[acronym] = word
+    end
+
+    self.update_acronyms_regex()
+  end
+
+  " public api "
+  defm pluralize(word)
+    if self.is_uncountable(word)
+      return word
+    else
+      result = self.executer.inflect(word, self.plural_irregulars)
+      if result != word
+        return result
+      else
+        return self.executer.inflect(word, self.plural_rules)
+      end
+    end
+  end
+
+  defm singularize(word)
+    if self.is_uncountable(word)
+      return word
+    else
+      result = self.executer.inflect(word, self.singular_irregulars)
+      if result != word
+        return result
+      else
+        return self.executer.inflect(word, self.singular_rules)
+      end
+    end
+  end
+
+  defm capitalize(word)
+    pattern = '\v^(.)(.*)$'
+    return substitute(word, pattern, '\u\1\L\2', '')
+  end
+
+  defm camelize(str)
+    camel_pattern = '\v%([_/|]){1}(.)'
+    camel_replace = '\u\1'
+
+    str = self.capitalize(str)
+    str = substitute(str, camel_pattern, camel_replace, 'g')
+    str = self.replace_acronyms(str)
+
+    return str
+  end
+
+  defm lower_camelize(str)
+    camel_pattern = '\v%([_/|]){1}(.)'
+    camel_replace = '\u\1'
+
+    str = tolower(str)
+    str = substitute(str, camel_pattern, camel_replace, 'g')
+
+    unless self.has_acronym_at_start(str)
+      str = self.replace_acronyms(str)
+    end
+
+    return str
+  end
+
+  defm underscorize(str)
+    str = substitute(str, '\v([:/|]+)', '_', 'g')
+    str = substitute(str, '\v(\u+)(\u\l)', '\1_\2', 'g')
+    str = substitute(str, '\v(\l|\d)(\u)', '\1_\2', 'g')
+    str = substitute(str, '-', '_', 'g')
+    str = tolower(str)
+
+    return str
+  end
+
+  defm dasherize(str)
+    str = self.underscorize(str)
+    str = substitute(str, '_', '-', 'g')
+
+    return str
+  end
+
+  defm humanize(str)
+    str = substitute(str, '\v_id', '', 'g')
+    str = substitute(str, '\v([-_/|])', ' ', 'g')
+    str = self.replace_acronyms(str)
+
+    return str
+  end
+
+  defm titleize(str)
+    title_pattern = '\v(\s+|^)(\l)'
+
+    str = self.underscorize(str)
+    str = self.humanize(str)
+    str = substitute(str, title_pattern, '\1\u\2', 'g')
+
+    return str
+  end
+
+  defm tableize(word)
+    return self.pluralize(self.underscorize(word))
+  end
+
+  defm classify(table_name)
+    table_name = self.underscorize(table_name)
+    table_name = substitute(table_name, '.*\.', '', '')
+    return self.camelize(self.singularize(table_name))
+  end
+
+  " affinize(name, affinity)"
+  defm affinize(name, a)
+    if a == 'model' || a == 'resource' || a == 'singular' || a == '' || a == 'null'
+      return self.singularize(name)
+    elseif a == 'controller' || a == 'collection' || a == 'plural'
+      return self.pluralize(name)
+    else
+      return a
+    end
+  end
+
+  defm clear()
+    self.plural_rules = []
+    self.singular_rules = []
+    self.acronyms = {}
+    self.acronyms_regex = ''
+    self.uncountable = {}
+  end
+
+  " misc helpers "
+  defm is_uncountable(word)
+    return has_key(self.uncountable, word)
+  end
+
+  defm is_irregular(quantity, word)
+    return has_key(self["irregular_#{quantity}"], word)
+  end
+
+  defm update_acronyms_regex()
+    self.acronyms_regex = '(' . join(keys(self.acronyms), '|') . ')'
+  end
+
+  defm replace_acronyms(str)
+    if len(self.acronyms) > 0
+      return substitute(str, '\v' . self.acronyms_regex, '\=self.acronym_for_match(submatch(0))', 'gi')
+    else
+      return str
+    end
+  end
+
+  defm has_acronym_at_start(str)
+    pattern = '\v^' . self.acronyms_regex
+    result = match(str, pattern)
+    return result == 0
+  end
+
+  defm acronym_for_match(str)
+    key = tolower(str)
+    if has_key(self.acronyms, key)
+      return self.acronyms[key]
+    else
+      return ''
+    end
+  end
+
+end
+
+class Inflector < BaseInflector
+  def initialize
+    super()
+    self.is_inflector = true
+  end
+
+  defm on_inject
+    self.load_defaults()
+  end
+
+  defm load_defaults
+    self.set_mode('append')
+    self.add_irregulars(get_default_irregular_rules())
+    self.add_plural_rules(get_default_plural_rules())
+    self.add_singular_rules(get_default_singular_rules())
+    self.add_acronyms(get_default_acronyms())
+    self.add_uncountables(get_default_uncountables())
+    self.set_mode('prepend')
+  end
+end
+
+class InflectionLoader
+  defm load(json, inflector)
+    if has_key(json, 'mode')
+      inflector.set_mode(json.mode)
+    end
+
+    " Using key, value on items doesn't work here "
+    " value would taken on the type of the first key in "
+    " the json, on subsequent looks if the type is "
+    " different to the initial type a type mismatch is thrown
+    for key in keys(json)
+      if key == 'acronyms'
+        self.load_acronyms(json[key], inflector)
+      elseif key == 'uncountables'
+        self.load_uncountables(json[key], inflector)
+      elseif key == 'irregulars'
+        self.load_irregulars(json[key], inflector)
+      elseif key == 'singulars'
+        self.load_singulars(json[key], inflector)
+      elseif key == 'plurals'
+        self.load_plurals(json[key], inflector)
+      end
+    end
+  end
+
+  defm load_acronyms(json, inflector)
+    if type(json) == type('')
+      acronyms = [json]
+    else
+      acronyms = json
+    end
+
+    inflector.add_acronyms(acronyms)
+  end
+
+  defm load_uncountables(json, inflector)
+    if type(json) == type('')
+      uncountables = [json]
+    else
+      uncountables = json
+    end
+
+    inflector.add_uncountables(uncountables)
+  end
+
+  defm load_irregulars(json, inflector)
+    for [singular, plural] in items(json)
+      inflector.add_irregular(singular, plural)
+    end
+  end
+
+  defm load_singulars(json, inflector)
+    for [from, to] in items(json)
+      inflector.add_singular_rule(from, to)
+    end
+  end
+
+  defm load_plurals(json, inflector)
+    for [from, to] in items(json)
+      inflector.add_plural_rule(from, to)
+    end
+  end
+end

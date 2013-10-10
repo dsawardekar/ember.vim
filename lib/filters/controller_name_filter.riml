@@ -1,0 +1,55 @@
+class ControllerNameFilter
+  defm set_inflector(inflector)
+    self.inflector = inflector
+  end
+
+  defm filter(str)
+    if self.is_singular(str)
+      return 'ObjectController'
+    else
+      return 'ArrayController'
+    end
+  end
+
+  " this is never going to work consistently "
+  " without tuning the inflector "
+  defm is_singular(str)
+    parts = self.get_name_parts(str)
+    if parts.action == ''
+      str = parts.base
+      plural = self.inflector.pluralize(str)
+      singular = self.inflector.singularize(plural)
+
+      return singular == str
+    else
+      return parts.action != 'index'
+    end
+  end
+
+  defm is_plural(str)
+    parts = self.get_name_parts(str)
+    if parts.action == ''
+      str = parts.base
+      singular = self.inflector.singularize(str)
+      plural = self.inflector.pluralize(singular)
+
+      return plural == str
+    else
+      return parts.action == 'index'
+    end
+  end
+
+  defm get_name_parts(str)
+    parts = {}
+    if str =~ '/'
+      eparts = split(str, '/')
+      parts.base = eparts[0]
+      parts.action = eparts[1]
+    else
+      parts.base = str
+      parts.action = ''
+    end
+
+    return parts
+  end
+end

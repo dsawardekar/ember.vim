@@ -1,0 +1,16 @@
+riml_include 'dsl'
+riml_include 'log_helpers'
+riml_include 'extension_loader'
+riml_include 'ember_plugin'
+
+class EmberPluginSpec
+  defm it_can_be_created
+    plugin = new EmberPlugin()
+  end
+
+  defm it_can_be_started
+    plugin = new EmberPlugin()
+    plugin.start()
+    expect(exists('#portkey_extension_ember_group#User#portkey_extension_ember')).to_be_true()
+  end
+end

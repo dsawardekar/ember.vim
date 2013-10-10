@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    rake (10.1.0)
+    riml (0.3.3)
+    speckle (0.1.22)
+      bundler (~> 1.3)
+      rake (~> 10.1.0)
+      riml (~> 0.3.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rake (~> 10.1.0)
+  riml (~> 0.3.3)
+  speckle (~> 0.1.22)

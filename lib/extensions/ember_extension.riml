@@ -1,0 +1,79 @@
+s:ember_extension_path = expand('<sfile>:h:h')
+
+class EmberExtension
+  " display name of extension "
+  defm get_name
+    return 'ember'
+  end
+
+  " abs path to the extension's portkey "
+  defm get_portkey_path(type, variant)
+    portkey_type = type
+    if portkey_type == 'custom'
+      return 'null'
+    end
+
+    portkey_variant = variant
+    if portkey_type == ''
+      portkey_type = 'appkit'
+    end
+
+    if portkey_variant == ''
+      portkey_variant = 'js'
+    end
+
+    path  = s:ember_extension_path . '/'
+    path .= "portkeys/#{self.get_name()}/#{portkey_type}_#{portkey_variant}_portkey.json"
+
+    return path
+  end
+
+  " default scope name of projections for this extension "
+  defm get_scope
+    return 'ember'
+  end
+
+  " finders and rankers "
+  " type "
+  " - projection "
+  " - resource "
+  " - file "
+  defm get_finder(type)
+    return false
+  end
+
+  defm get_ranker(type)
+    return false
+  end
+
+  defm get_syntax_files()
+    syntaxes = {}
+    " TODO: load by resource_type "
+    syntaxes['*.js'] = 'syntax/emberjs.vim'
+    syntaxes['*.coffee'] = 'syntax/emberjs.vim'
+
+    return syntaxes
+  end
+
+  " Optional "
+  " configure inflector "
+  defm configure_inflector(inflector)
+  end
+
+  defm configure_projection(projection)
+  end
+
+  " quibbler custom filters "
+  defm get_filters()
+    filters = {}
+    filters['cname'] = new ControllerNameFilter()
+    filters['mname'] = new ModelNameFilter()
+
+    return filters
+  end
+
+  " extractors "
+  defm get_extractors()
+    return []
+  end
+end

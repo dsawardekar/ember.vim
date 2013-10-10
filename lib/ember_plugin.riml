@@ -1,0 +1,24 @@
+" ifdef "
+if exists('g:portkey_extension_ember_loaded')
+  finish
+end
+
+riml_include 'extension_loader.riml'
+
+class EmberPlugin
+  defm start
+    self.loader = new ExtensionLoader('ember')
+    self.loader.start()
+  end
+end
+
+def main
+  s:plugin = new EmberPlugin()
+  s:plugin.start()
+end
+
+unless exists('g:speckle_mode')
+  main()
+end
+
+g:portkey_extension_ember_loaded = true
