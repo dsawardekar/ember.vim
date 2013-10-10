@@ -226,6 +226,7 @@ In addition the following plugins are recommended.
 
 1. [Yehuda Katz][15] and the Emberjs team for Ember.
 2. [Tim Pope][16] - For [vim-rails][3].
+3. [Stefan Penner][23] - For [ember-appkit][6].
 
 ## Contributing
 
@@ -258,3 +259,4 @@ MIT License. Copyright © 2013 Darshan Sawardekar.
 [20]: https://travis-ci.org/dsawardekar/ember.vim
 [21]: https://gemnasium.com/dsawardekar/ember.vim.png
 [22]: https://gemnasium.com/dsawardekar/ember.vim
+[23]: https://github.com/stefanpenner
