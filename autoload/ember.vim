@@ -173,7 +173,7 @@ function! <SID>s:EmberExtension_get_extractors() dict
 endfunction
 
 " included: 'version.riml'
-let g:ember_extension_version = '0.1.0'
+let g:ember_extension_version = '0.1.1'
 function! ember#get_extension()
   if !(exists('s:extension'))
     let s:extension = s:EmberExtensionConstructor()
