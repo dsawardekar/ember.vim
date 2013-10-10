@@ -1,0 +1,22 @@
+riml_include 'dsl'
+riml_include 'inflections.riml'
+riml_include 'inflector.riml'
+riml_include 'log_helpers'
+riml_include 'model_name_filter'
+
+class ModelNameFilterSpec
+  defm it_can_find_model_name_from_base_route
+    f = new ModelNameFilter()
+    f.inflector = new Inflector()
+    f.inflector.on_inject()
+    expect(f.filter('products')).to_equal('product')
+  end
+
+  defm it_can_find_model_name_from_action_route
+    f = new ModelNameFilter()
+    f.inflector = new Inflector()
+    f.inflector.on_inject()
+    expect(f.filter('products/index')).to_equal('product')
+    expect(f.filter('categories/new')).to_equal('category')
+  end
+end

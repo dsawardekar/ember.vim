@@ -1,0 +1,154 @@
+riml_include 'dsl.riml'
+riml_include 'log_helpers.riml'
+riml_include 'inflections.riml'
+riml_include 'inflector.riml'
+riml_include 'controller_name_filter.riml'
+
+class ControllerNameFilterSpec
+  defm it_can_extract_parts_without_action_k
+    f = new ControllerNameFilter()
+    parts = f.get_name_parts('product')
+    expect(parts.base).to_equal('product')
+    expect(parts.action).to_equal('')
+  end
+
+  defm it_can_extract_parts_with_action_k
+    f = new ControllerNameFilter()
+    parts = f.get_name_parts('products/index')
+    expect(parts.base).to_equal('products')
+    expect(parts.action).to_equal('index')
+  end
+
+  defm it_can_detect_if_singular
+    f = new ControllerNameFilter()
+    inf = new Inflector()
+    inf.on_inject()
+    f.set_inflector(inf)
+
+    table = {
+    \ 'ability': 'abilities',
+    \ 'address': 'addresses',
+    \ 'agency': 'agencies',
+    \ 'alias': 'aliases',
+    \ 'analysis': 'analyses',
+    \ 'archive': 'archives',
+    \ 'axis': 'axes',
+    \ 'bacterium': 'bacteria',
+    \ 'basis': 'bases',
+    \ 'box': 'boxes',
+    \ 'buffalo': 'buffaloes',
+    \ 'bus': 'buses',
+    \ 'case': 'cases',
+    \ 'category': 'categories',
+    \ 'child': 'children',
+    \ 'comment': 'comments',
+    \ 'crisis': 'crises',
+    \ 'datum': 'data',
+    \ 'day': 'days',
+    \ 'deer': 'deer',
+    \ 'diagnosis': 'diagnoses',
+    \ 'dwarf': 'dwarves',
+    \ 'edge': 'edges',
+    \ 'elf': 'elves',
+    \ 'equipment': 'equipment',
+    \ 'experience': 'experiences',
+    \ 'fish': 'fishes',
+    \ 'fix': 'fixes',
+    \ 'foobar': 'foobars',
+    \ 'half': 'halves',
+    \ 'hive': 'hives',
+    \ 'horse': 'horses',
+    \ 'house': 'houses',
+    \ 'index': 'indices',
+    \ 'information': 'information',
+    \ 'knife': 'knives',
+    \ 'louse': 'lice',
+    \ 'man': 'men',
+    \ 'matrix': 'matrices',
+    \ 'medium': 'media',
+    \ 'money': 'money',
+    \ 'moose': 'moose',
+    \ 'mouse': 'mice',
+    \ 'move': 'moves',
+    \ 'movie': 'movies',
+    \ 'news': 'news',
+    \ 'newsletter': 'newsletters',
+    \ 'node_child': 'node_children',
+    \ 'octopus': 'octopi',
+    \ 'old_news': 'old_news',
+    \ 'ox': 'oxen',
+    \ 'parenthesis': 'parentheses',
+    \ 'person': 'people',
+    \ 'perspective': 'perspectives',
+    \ 'photo': 'photos',
+    \ 'portfolio': 'portfolios',
+    \ 'prize': 'prizes',
+    \ 'process': 'processes',
+    \ 'quality': 'qualities',
+    \ 'query': 'queries',
+    \ 'quiz': 'quizzes',
+    \ 'rice': 'rice',
+    \ 'safe': 'safes',
+    \ 'salesperson': 'salespeople',
+    \ 'search': 'searches',
+    \ 'series': 'series',
+    \ 'sheep': 'sheep',
+    \ 'shoe': 'shoes',
+    \ 'species': 'species',
+    \ 'spokesman': 'spokesmen',
+    \ 'stack': 'stacks',
+    \ 'status': 'statuses',
+    \ 'switch': 'switches',
+    \ 'testis': 'testes',
+    \ 'tomato': 'tomatoes',
+    \ 'vertex': 'vertices',
+    \ 'virus': 'viri',
+    \ 'wife': 'wives',
+    \ 'wish': 'wishes',
+    \ 'woman': 'women',
+    \}
+
+    for [singular, plural] in items(table)
+      expect(f.is_singular(singular)).to_be_true()
+      expect(f.is_plural(plural)).to_be_true()
+    end
+  end
+
+  defm it_uses_object_controller_for_singulars
+    f = new ControllerNameFilter()
+    inf = new Inflector()
+    inf.on_inject()
+    f.set_inflector(inf)
+
+    expect(f.filter('box')).to_equal('ObjectController')
+  end
+
+  defm it_uses_array_controller_for_plurals
+    f = new ControllerNameFilter()
+    inf = new Inflector()
+    inf.on_inject()
+    f.set_inflector(inf)
+
+    expect(f.filter('boxes')).to_equal('ArrayController')
+  end
+
+  defm it_uses_object_controller_for_new_action
+    f = new ControllerNameFilter()
+    inf = new Inflector()
+    inf.on_inject()
+    f.set_inflector(inf)
+
+    expect(f.filter('products/new')).to_equal('ObjectController')
+    expect(f.filter('product/new')).to_equal('ObjectController')
+  end
+
+  defm it_uses_array_controller_for_index_action
+    f = new ControllerNameFilter()
+    inf = new Inflector()
+    inf.on_inject()
+    f.set_inflector(inf)
+
+    expect(f.filter('products/index')).to_equal('ArrayController')
+    expect(f.filter('product/index')).to_equal('ArrayController')
+  end
+end

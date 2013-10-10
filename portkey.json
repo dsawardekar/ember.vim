@@ -1,0 +1,46 @@
+{
+  "lib/*.riml": {
+    "type": "app",
+    "related": ["lib/extensions/ember_extension.riml"],
+    "test": "spec/%s_spec.riml"
+  },
+  "lib/extensions/*_extension.riml": {
+    "type": "extension",
+    "related": ["lib/ember.riml", "lib/ember_plugin.riml"],
+    "test": "spec/extensions/%s_extension_spec.riml"
+  },
+  "lib/utils/*.riml": {
+    "type": "utility",
+    "test": "spec/utils/%s_spec.riml"
+  },
+  "lib/filters/*_filter.riml": {
+    "type": "filter",
+    "test": "spec/filters/%s_filter_spec.riml"
+  },
+  "portkeys/ember/*_portkey.json": {
+    "type": "portkey"
+  },
+  "syntax/*.vim": {
+    "type": "syntax"
+  },
+  "*": {
+    "type": "build"
+  },
+
+  "spec/*_spec.riml": {
+    "type": "spec",
+    "alternate": "lib/%s.riml"
+  },
+  "spec/extensions/*_spec.riml": {
+    "type": "spec",
+    "alternate": "lib/extensions/%s.riml"
+  },
+  "spec/utils/*_spec.riml": {
+    "type": "spec",
+    "alternate": "lib/%s.riml"
+  },
+  "spec/filters/*_spec.riml": {
+    "type": "spec",
+    "alternate": "lib/%s.riml"
+  }
+}

@@ -1,0 +1,22 @@
+riml_include 'dsl'
+riml_include 'log_helpers'
+riml_include 'controller_name_filter'
+riml_include 'model_name_filter'
+riml_include 'ember_extension'
+
+class EmberExtensionSpec
+  defm it_can_get_default_portkey_path
+    e = new EmberExtension()
+    expect(e.get_portkey_path('', '')).to_match('appkit_js')
+  end
+
+  defm it_can_get_portkey_path_for_type
+    e = new EmberExtension()
+    expect(e.get_portkey_path('classic', '')).to_match('classic_js')
+  end
+
+  defm it_can_get_portkey_path_for_type_and_variant
+    e = new EmberExtension()
+    expect(e.get_portkey_path('classic', 'coffee')).to_match('classic_coffee')
+  end
+end

@@ -1,0 +1,25 @@
+class ModelNameFilter
+  defm set_inflector(inflector)
+    self.inflector = inflector
+  end
+
+  defm filter(str)
+    parts = self.get_name_parts(str)
+    model_name = parts.base
+    return self.inflector.singularize(model_name)
+  end
+
+  defm get_name_parts(str)
+    parts = {}
+    if str =~ '/'
+      eparts = split(str, '/')
+      parts.base = eparts[0]
+      parts.action = eparts[1]
+    else
+      parts.base = str
+      parts.action = ''
+    end
+
+    return parts
+  end
+end

@@ -1,0 +1,25 @@
+riml_include 'dsl'
+riml_include 'extension_loader'
+riml_include 'log_helpers'
+
+class ExtensionLoaderSpec
+  defm it_can_be_created
+    loader = new ExtensionLoader('lorem')
+  end
+
+  defm it_can_be_started
+    loader = new ExtensionLoader('ipsum')
+    expect(exists('#portkey_extension_ipsum_group#User#portkey_extension_ipsum')).to_be_false()
+
+    loader.start()
+    expect(exists('#portkey_extension_ipsum_group#User#portkey_extension_ipsum')).to_be_true()
+    loader.stop()
+  end
+
+  defm it_can_be_stopped
+    loader = new ExtensionLoader('ipsum')
+    loader.start()
+    loader.stop()
+    expect(exists('#portkey_extension_ipsum_group#User#portkey_extension_ipsum_group')).to_be_false()
+  end
+end

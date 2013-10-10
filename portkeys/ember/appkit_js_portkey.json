@@ -1,0 +1,97 @@
+{
+  "app/*.js": {
+    "type": "app"
+  },
+  "app/models/*.js": {
+    "type": "model",
+    "alternate": ["app/routes/%s.js", "app/routes/%{source|plural}.js", "app/routes/%{source|plural}/index.js"],
+    "related": ["app/controllers/%s.js", "app/controllers/%{source|plural}.js", "app/controllers/%{source|plural}/index.js"],
+    "test": "tests/models/%s_test.js",
+    "template": "var %S = DS.Model.extend({\n\t\n});\n\nexport default %S;"
+  },
+  "app/routes/**.js": {
+    "type": "route",
+    "alternate": ["app/models/%{source|mname}.js"],
+    "related": ["app/controllers/%s.js", "app/templates/%s.hbs"],
+    "test": "tests/routes/%s_test.js",
+    "template": "var %SRoute = Ember.Route.extend({\n\t\n});\n\nexport default %SRoute;"
+  },
+  "app/controllers/**.js": {
+    "type": "controller",
+    "alternate": ["app/routes/%s.js", "app/models/%{source|mname}.js"],
+    "related": ["app/templates/%s.hbs", "app/views/%s.js"],
+    "test": "tests/controllers/%s_test.js",
+    "template": "var %SController = Ember.%{source|cname}.extend({\n\t\n});\n\nexport default %SController;"
+  },
+  "app/templates/**.hbs": {
+    "type": "template",
+    "alternate": ["app/routes/%s.js", "app/models/%{source|mname}.js"],
+    "related": ["app/controllers/%s.js", "app/views/%s.js"],
+    "template": ""
+  },
+  "app/views/**.js": {
+    "type": "view",
+    "alternate": ["app/routes/%s.js", "app/models/%{source|mname}.js"],
+    "related": ["app/controllers/%s.js", "app/templates/%s.hbs"],
+    "test": "tests/views/%s_test.js",
+    "template": "var %SView = Ember.View.extend({\n\t\n});\n\nexport default %SView;"
+  },
+  "app/helpers/*.js": {
+    "type": "helper",
+    "test": "tests/helpers/%s_test.js",
+    "template": "var %SHelper = function(value) {\n\t\n};\n\nEmber.Handlebars.helper('%s', %SHelper);\n\nexport default %SHelper;"
+  },
+  "app/components/*.js": {
+    "type": "component",
+    "related": "app/templates/components/%s.hbs",
+    "test": "tests/components/%s_test.js",
+    "template": "var %SComponent = Ember.Component.extend({\n\t\n});\n\nexport default %SComponent;"
+  },
+
+
+
+  "app/styles/*.css": {
+    "type": "stylesheet"
+  },
+  "app/styles/*.scss": {
+    "type": "stylesheet"
+  },
+  "app/styles/*.sass": {
+    "type": "stylesheet"
+  },
+
+
+
+  "tests/models/*_test.js": {
+    "type": "test",
+    "alternate": "app/models/%s_test.js"
+  },
+  "tests/routes/*_test.js": {
+    "type": "test",
+    "alternate": "app/routes/%s_test.js"
+  },
+  "tests/controllers/*_test.js": {
+    "type": "test",
+    "alternate": "app/controllers/%s_test.js"
+  },
+  "tests/helpers/*_test.js": {
+    "type": "test",
+    "alternate": "app/helpers/%s_test.js"
+  },
+  "tests/views/*_test.js": {
+    "type": "test",
+    "alternate": "app/views/%s_test.js"
+  },
+  "tests/components/*_test.js": {
+    "type": "test",
+    "alternate": "app/components/%s_test.js"
+  },
+
+
+  "tasks/**.js": {
+    "type": "grunt"
+  },
+  "Gruntfile.js": {
+    "type": "grunt"
+  }
+}
