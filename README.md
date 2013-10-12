@@ -99,6 +99,10 @@ Classic Emberjs boilerplate in Javascript.
 4. `classic-coffee`
 Classic with Coffeescript boilerplate and patterns.
 
+5. `custom` ie: `ember:custom`
+No default file patterns, patterns from portkey.json are used instead. Allows use of
+syntax highlighting and filters from the ember extension.
+
 ## Navigation with Alternate & Related
 
 Portkeys Ex commands `:A` and `:R` navigate to the alternate and related
