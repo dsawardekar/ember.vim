@@ -1,4 +1,4 @@
-# Ember [![Build Status][19]][20] [![Dependency Status][21]][22]
+# Ember.vim [![Build Status][19]][20] [![Dependency Status][21]][22]
 
 Ember.vim is a Vim plugin for the [Emberjs][1] frontend framework inspired by [vim-rails][3].
 
