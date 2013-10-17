@@ -32,8 +32,8 @@ hi def link emberAttrDelim Delimiter
 
 " default styles
 if !exists('g:ember_handlebars_no_default_styles')
-  hi htmlArg guifg=3 ctermfg=3
-  hi Delimiter guifg=4 ctermfg=4
+  hi htmlArg guifg=white ctermfg=white
+  hi Delimiter guifg=white ctermfg=white
 end
 
 let b:current_syntax = 'handlebars.ember'
