@@ -83,6 +83,9 @@ task :dist => [:compile] do
   move_to APP_OUTPUT, APP_DEST
 end
 
+desc 'Make a new release'
+task :release => :dist
+
 def move_to(from, to)
   to_dir = File.dirname(to)
   to_name = File.basename(to)
