@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.1.8
+
+* Upgrades to Riml 0.4.0
+* Upgrades to Speckle 0.1.31
+
 ### 0.1.7
 
 * Upgrades to riml 0.3.9 and Speckle 0.1.29.
