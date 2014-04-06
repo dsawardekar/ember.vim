@@ -206,7 +206,7 @@ for instructions on how to install Portkey.
 
 In addition the following plugins are recommended.
 
-* [vim-handlebars][5] - Provides base Handlebars syntax highlighting
+* [vim-mustache-handlebars][5] - Provides base Handlebars syntax highlighting
 
 ## Installation
 
@@ -244,7 +244,7 @@ MIT License. Copyright © 2013 Darshan Sawardekar.
 [2]: https://github.com/dsawardekar/portkey
 [3]: https://github.com/tpope/vim-rails
 [4]: https://github.com/dsawardekar/portkey#Installation
-[5]: https://github.com/nono/vim-handlebars
+[5]: https://github.com/mustache/vim-mustache-handlebars
 [6]: https://github.com/stefanpenner/ember-app-kit
 [7]: https://github.com/gmarik/vundle
 [8]: https://github.com/tpope/vim-pathogen
