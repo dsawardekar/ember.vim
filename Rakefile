@@ -49,6 +49,13 @@ CLEAN.include(PLUGIN_DEST)
 CLEAN.include(APP_DEST)
 CLOBBER.include(BUILD_DIR)
 
+# tek riml
+if ENV.has_key?('RIML_DIR')
+  RIML_EXEC = "#{ENV['RIML_DIR']}/bin/riml"
+else
+  RIML_EXEC = "bundle exec riml"
+end
+
 desc 'Default task :test'
 task :default => :test
 
@@ -61,12 +68,12 @@ end
 
 desc 'Compile plugin'
 task :compile_plugin => :build do
-  sh "bundle exec riml -c #{PLUGIN_SOURCE} -I #{LIB_DIRS} -o #{BUILD_DIR}"
+  sh "#{RIML_EXEC} -c #{PLUGIN_SOURCE} -I #{LIB_DIRS} -o #{BUILD_DIR}"
 end
 
 desc 'Compile app'
 task :compile_app => :build do
-  sh "bundle exec riml -c #{APP_SOURCE} -I #{LIB_DIRS} -o #{BUILD_DIR}"
+  sh "#{RIML_EXEC} -c #{APP_SOURCE} -I #{LIB_DIRS} -o #{BUILD_DIR}"
 end
 
 desc 'Compile all'
