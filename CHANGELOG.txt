@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.2.0
+
+* Built using @tek's Riml fork.
+  * Fixes issues on Vim > p260.
+
 ### 0.1.8
 
 * Upgrades to Riml 0.4.0
