@@ -211,7 +211,7 @@ In addition the following plugins are recommended.
 ## Installation
 
 ##### 1. With [Vundle][7]
-`Bundle 'dsawardekar/ember.vim'`
+`Plugin 'dsawardekar/ember.vim'`
 
 ##### 2. With [Pathogen][8]
 `git clone https://github.com/dsawardekar/ember.vim ~/.vim/bundle/ember.vim`
